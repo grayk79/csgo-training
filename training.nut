@@ -1,4 +1,7 @@
-mTrainingDebug					<- false;
+const TS_VERSION = 0.1;
+
+//TODO: Re-add comments and debug messages
+mTrainingDebug				<- false;
 
 mClipBrushes				<- 0;
 mImpacts					<- 0;
@@ -28,18 +31,11 @@ enum WEAPON
 function debugPrint(text)
 {
 	if(!mTrainingDebug) return;
-	printl("[Tr Debug]" + text);
+	printl("[TrainingDebug]" + text);
 }
 
-
-//TODO: Test using local keyword in functions' parameters
 function clipbr(clipType = -1)
-{
-
-	debugPrint("mClipBrushes = " + mClipBrushes);
-	debugPrint("clipType = " + clipType);
-
-	
+{	
 	clipType = (clipType == -1)?mClipBrushes +1:clipType;
 	switch(clipType)
 	{
@@ -69,9 +65,6 @@ function clipbr(clipType = -1)
 
 function wh(enable = -1)
 {
-	debugPrint("mWallhack = " + mWallhack);
-	debugPrint("enable = " + enable);
-	
 	enable = (enable == -1)?!mWallhack:enable;
 	if(enable)
 	{
@@ -88,10 +81,7 @@ function wh(enable = -1)
 }
 
 function bhop(enable = -1)
-{
-	debugPrint("mBunnyhop = " + mBunnyhop);
-	debugPrint("enable = " + enable);
-	
+{	
 	enable = (enable == -1)?!mBunnyhop:enable;
 	if(enable)
 	{
@@ -115,9 +105,6 @@ function bhop(enable = -1)
 
 function impacts(impactsType = -1)
 {
-	debugPrint("mImpacts = " + mImpacts);
-	debugPrint("impactsType = " + impactsType);
-	
 	impactsType = (impactsType == -1)?mImpacts +1:impactsType;
 	switch(impactsType)
 	{
@@ -146,10 +133,7 @@ function impacts(impactsType = -1)
 }
 
 function warmup(enable = -1)
-{
-	debugPrint("mWarmup = " + mWarmup);
-	debugPrint("enable = " + enable);
-	
+{	
 	enable = (enable == -1)?!ScriptIsWarmupPeriod():enable;
 	if(enable)
 	{
@@ -167,11 +151,7 @@ function warmup(enable = -1)
 }
 
 function infAmmo(ammoType = -1)
-{	
-	debugPrint("mInfAmmo = " + mInfAmmo);
-	debugPrint("mInfAmmoMode3Enabled = " + mInfAmmoMode3Enabled);
-	debugPrint("ammoType = " + ammoType);
-	
+{		
 	ammoType = (ammoType == -1)?mInfAmmo +1:ammoType;
 	switch(ammoType)
 	{
@@ -214,9 +194,7 @@ function infAmmo(ammoType = -1)
 	}
 	
 	function infAmmoMode3Enabled()
-	{
-		debugPrint("infAmmoMode3Enabled function executed");
-	
+	{	
 		SendToConsole("bind mouse1 +attack");
 		mInfAmmoMode3Enabled = false;
 	}
@@ -224,9 +202,6 @@ function infAmmo(ammoType = -1)
 
 function grenTraj(enable = -1)
 {
-	debugPrint("mGrenadeTrajectory = " + mGrenadeTrajectory);
-	debugPrint("enable = " + enable);
-	
 	enable = (enable == -1)?!mGrenadeTrajectory:enable;
 	
 	if(enable)
@@ -245,8 +220,6 @@ function grenTraj(enable = -1)
 
 function weaponTweaks(wpType = 0)
 {	
-	debugPrint("mWeaponTweaks = " + mWeaponTweaks);	
-	
 	switch(wpType)
 	{
 		case 1:
@@ -283,8 +256,6 @@ function weaponTweaks(wpType = 0)
 
 function hpTweaks(hpType = 0)
 {	
-	debugPrint("mHealthweaks = " + mHealthweaks);	
-	
 	switch(hpType)
 	{
 		case 1:
@@ -323,7 +294,6 @@ function weapons(wpType = "")
 		SendToConsole("give weapon_smokegrenade");
 		SendToConsole("give weapon_molotov");
 		SendToConsole("give weapon_decoy");
-		debugPrint("Given a p250 + nades");
 	}
 
 	local wpTypeEnum;
@@ -338,28 +308,24 @@ function weapons(wpType = "")
 		case WEAPON.AK47:
 		{
 			SendToConsole("give weapon_ak47");
-			debugPrint("Given an ak47");
 			give_other_weapons();
 			break;
 		}
 		case WEAPON.M4A4:
 		{
 			SendToConsole("give weapon_m4a1");
-			debugPrint("Given a m4a4");
 			give_other_weapons();
 			break;
 		}
 		case WEAPON.M4A1:
 		{
 			SendToConsole("give weapon_m4a1_silencer");
-			debugPrint("Given a m4a1-s");
 			give_other_weapons();
 			break;
 		}
 		case WEAPON.AWP:
 		{
 			SendToConsole("give weapon_awp");
-			debugPrint("Given an awp");
 			give_other_weapons();
 			break;
 		}
@@ -387,10 +353,7 @@ function clearMap()
 }
 
 function money(enable = -1)
-{	
-	debugPrint("mMoney = " + mMoney);
-	debugPrint("enable = " + enable);
-	
+{		
 	enable = (enable == -1)?!mMoney:enable;
 	if(enable)
 	{
@@ -412,10 +375,7 @@ function money(enable = -1)
 }
 
 function respawn(enable = -1)
-{
-	debugPrint("v_respawn = " + mRespawn);
-	debugPrint("enable = " + enable);
-	
+{	
 	enable = (enable == -1)?!mRespawn:enable;
 	if(enable)
 	{
@@ -432,10 +392,7 @@ function respawn(enable = -1)
 }
 
 function defWeapons(enable = -1)
-{
-	debugPrint("mDefaultWeapons = " + mDefaultWeapons);
-	debugPrint("enable = " + enable);
-	
+{	
 	enable = (enable == -1)?!mDefaultWeapons:enable;
 	if(enable)
 	{
@@ -488,12 +445,6 @@ function nadetr(enable = -1, start_paused = 0)
 //TODO: Change from toggling to enabling only, unless specified otherwise
 function trainingStartup(enable = -1)
 {	
-	if(mTrainingDebug)
-	{
-		printl("[Debug] mStartup = " + mStartup);
-		printl("[Debug] enable = " + enable);
-	}
-	
 	enable = (enable == -1)?!mStartup:enable;
 	if(enable)
 	{
@@ -530,12 +481,7 @@ function trainingStartup(enable = -1)
 }
 
 function trainingAutoSetup(enable = true)
-{
-	if(mTrainingDebug)
-	{
-		printl("[Debug] enable = " + enable);
-	}
-	
+{	
 	if(enable)
 	{
 		trainingStartup(true);
