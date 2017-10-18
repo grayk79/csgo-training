@@ -1,26 +1,21 @@
-//Status variables
-v_debug					<- false;
-////Manually turn this var on to enable debugging. Type
-////	"script v_debug = true"
-////in console
+mTrainingDebug					<- false;
 
-v_clipbrushes			<- 0;
-v_impacts				<- 0;
-v_infammo				<- 0;
-v_weapontweaks			<- 0;
-v_healthweaks			<- 0;
-v_startup				<- false;
-v_infammo_mode3_enabled <- false;
-v_wallhack				<- false;
-v_bunnyhop				<- false;
-v_warmup				<- false;
-v_grenadetrajectory 	<- false;
-v_money					<- false;
-v_respawn				<- false;
-v_defaultweapons		<- false;
-v_nadetraining			<- false;
+mClipBrushes				<- 0;
+mImpacts					<- 0;
+mInfAmmo					<- 0;
+mWeaponTweaks				<- 0;
+mHealthweaks				<- 0;
+mStartup					<- false;
+mInfAmmoMode3Enabled 		<- false;
+mWallhack					<- false;
+mBunnyhop					<- false;
+mWarmup						<- false;
+mGrenadeTrajectory 			<- false;
+mMoney						<- false;
+mRespawn					<- false;
+mDefaultWeapons				<- false;
+//v_nadetraining				<- false;
 
-//Enum for giving weapons(weapons() function)
 enum WEAPON
 {
 	NULL,
@@ -32,41 +27,40 @@ enum WEAPON
 
 function debugPrint(text)
 {
-	if(!v_debug) return;
+	if(!mTrainingDebug) return;
 	printl("[Tr Debug]" + text);
 }
 
 
-function clipbr(cliptype = -1)
-{	//Show player and grenades clip brushes
+//TODO: Test using local keyword in functions' parameters
+function clipbr(clipType = -1)
+{
 
-	debugPrint("v_clipbrushes = " + v_clipbrushes);
-	debugPrint("cliptype = " + cliptype);
+	debugPrint("mClipBrushes = " + mClipBrushes);
+	debugPrint("clipType = " + clipType);
 
 	
-	cliptype = (cliptype == -1)?v_clipbrushes +1:cliptype;
-	//If function was called without a parameter, set cliptype to increased v_clipbrushes(current mode)
-	//For some reason the "function clipbr(cliptype = v_clipbrushes +1)" isn't working
-	switch(cliptype)
+	clipType = (clipType == -1)?mClipBrushes +1:clipType;
+	switch(clipType)
 	{
 		case 1:
-		{	//If cliptype == mode 1(player clip brushes)
+		{
 			SendToConsole("r_drawclipbrushes 2");
-			v_clipbrushes = 1;
+			mClipBrushes = 1;
 			ScriptPrintMessageChatAll("[Training] Player clip brushes are 'ON'");
 			break;
 		}
 		case 2:
-		{	//If cliptype == mode 2(grenade clip brushes)
+		{
 			SendToConsole("r_drawclipbrushes 3"); 
-			v_clipbrushes = 2;
+			mClipBrushes = 2;
 			ScriptPrintMessageChatAll("[Training] Grenade clip brushes are 'ON'");
 			break;
 		}
 		default:
-		{	//Default variant
+		{
 			SendToConsole("r_drawclipbrushes 0"); 
-			v_clipbrushes = 0;
+			mClipBrushes = 0;
 			ScriptPrintMessageChatAll("[Training] Clip brushes are 'OFF'");
 		}
 	}
@@ -75,38 +69,37 @@ function clipbr(cliptype = -1)
 
 function wh(enable = -1)
 {
-	debugPrint("v_wallhack = " + v_wallhack);
+	debugPrint("mWallhack = " + mWallhack);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_wallhack:enable;
-	//If function was called without a parameter, set enable to inverted v_wallhack
+	enable = (enable == -1)?!mWallhack:enable;
 	if(enable)
 	{
 		SendToConsole("r_drawothermodels 2");
-		v_wallhack = true;
+		mWallhack = true;
 		ScriptPrintMessageChatAll("[Training] Wallhack is 'ON'");
 	}
 	else
 		{
 		SendToConsole("r_drawothermodels 1");
-		v_wallhack = false;
+		mWallhack = false;
 		ScriptPrintMessageChatAll("[Training] Wallhack is 'OFF'");
 	}
 }
 
 function bhop(enable = -1)
 {
-	debugPrint("v_bunnyhop = " + v_bunnyhop);
+	debugPrint("mBunnyhop = " + mBunnyhop);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_bunnyhop:enable;
+	enable = (enable == -1)?!mBunnyhop:enable;
 	if(enable)
 	{
 		SendToConsole("sv_enablebunnyhopping 1");
 		SendToConsole("sv_autobunnyhopping 1");
 		SendToConsole("sv_clamp_unsafe_velocities 0");
 		SendToConsole("sv_airaccelerate 100");
-		v_bunnyhop = true;
+		mBunnyhop = true;
 		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'ON'");
 	}
 	else
@@ -115,30 +108,30 @@ function bhop(enable = -1)
 		SendToConsole("sv_autobunnyhopping 0");
 		SendToConsole("sv_clamp_unsafe_velocities 1");
 		SendToConsole("sv_airaccelerate 12");
-		v_bunnyhop = false;
+		mBunnyhop = false;
 		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'OFF'");
 	}
 }
 
-function impacts(impactstype = -1)
-{	//Bullet impacts
-	debugPrint("v_impacts = " + v_impacts);
-	debugPrint("impactstype = " + impactstype);
+function impacts(impactsType = -1)
+{
+	debugPrint("mImpacts = " + mImpacts);
+	debugPrint("impactsType = " + impactsType);
 	
-	impactstype = (impactstype == -1)?v_impacts +1:impactstype;
-	switch(impactstype)
+	impactsType = (impactsType == -1)?mImpacts +1:impactsType;
+	switch(impactsType)
 	{
 		case 1:
-		{	//Bullet impacts
+		{
 			SendToConsole("sv_showimpacts 3");
-			v_impacts = 1;
+			mImpacts = 1;
 			ScriptPrintMessageChatAll("[Training] Bullet impacts are 'ON'");
 			break;
 		}
 		case 2:
-		{	//Bullet penetraion impacts
+		{
 			SendToConsole("sv_showimpacts_penetration 1"); 
-			v_impacts = 2;
+			mImpacts = 2;
 			ScriptPrintMessageChatAll("[Training] Bullet penetraion impacts are 'ON'");
 			break;
 		}
@@ -146,7 +139,7 @@ function impacts(impactstype = -1)
 		{
 			SendToConsole("sv_showimpacts 0");
 			SendToConsole("sv_showimpacts_penetration 0"); 
-			v_impacts = 0;
+			mImpacts = 0;
 			ScriptPrintMessageChatAll("[Training] Bullet impacts are 'OFF'");
 		}
 	}
@@ -154,7 +147,7 @@ function impacts(impactstype = -1)
 
 function warmup(enable = -1)
 {
-	debugPrint("v_warmup = " + v_warmup);
+	debugPrint("mWarmup = " + mWarmup);
 	debugPrint("enable = " + enable);
 	
 	enable = (enable == -1)?!ScriptIsWarmupPeriod():enable;
@@ -162,118 +155,118 @@ function warmup(enable = -1)
 	{
 		SendToConsole("mp_warmup_start");
 		SendToConsole("mp_warmup_pausetimer 1");
-		v_warmup = true;
+		mWarmup = true;
 	}
 	else
 	{
 		SendToConsole("mp_warmup_end");
 		SendToConsole("mp_warmuptime 30");
 		SendToConsole("mp_warmup_pausetimer 0");
-		v_warmup = false;
+		mWarmup = false;
 	}
 }
 
-function infammo(ammotype = -1)
+function infAmmo(ammoType = -1)
 {	
-	debugPrint("v_infammo = " + v_infammo);
-	debugPrint("v_infammo_mode3_enabled = " + v_infammo_mode3_enabled);
-	debugPrint("ammotype = " + ammotype);
+	debugPrint("mInfAmmo = " + mInfAmmo);
+	debugPrint("mInfAmmoMode3Enabled = " + mInfAmmoMode3Enabled);
+	debugPrint("ammoType = " + ammoType);
 	
-	ammotype = (ammotype == -1)?v_infammo +1:ammotype;
-	switch(ammotype)
+	ammoType = (ammoType == -1)?mInfAmmo +1:ammoType;
+	switch(ammoType)
 	{
 		case 1:
-		{	//Infinite ammo(sv_infinite_ammo 1)
-			if(v_infammo_mode3_enabled) infammo_mode3_enabled();	//Have the mode 3 been enabled, if yes, rebind the mouse1 to +attack
+		{
+			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 		
 			SendToConsole("sv_infinite_ammo 1");
-			v_infammo = 1;
+			mInfAmmo = 1;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo is 'ON'");
 			break;
 		}
 		case 2:
-		{	//Infinite ammo dm-like(sv_infinite_ammo 2)
-			if(v_infammo_mode3_enabled) infammo_mode3_enabled();
+		{
+			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 		
 			SendToConsole("sv_infinite_ammo 2");
-			v_infammo = 2;
+			mInfAmmo = 2;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo with reloading is 'ON'");
 			break;
 		}
 		case 3:
-		{	//Infinite ammo, which fills up ammo on mouse1 release
+		{
 			SendToConsole("alias +noreload \"+attack; sv_infinite_ammo 2\"");
 			SendToConsole("alias -noreload \"-attack; sv_infinite_ammo 1\""); 
 			SendToConsole("bind mouse1 +noreload");
-			v_infammo = 3;
-			v_infammo_mode3_enabled = true;
+			mInfAmmo = 3;
+			mInfAmmoMode3Enabled = true;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo without reloading is 'ON'");
 			break;
 		}
 		default:
 		{
-			if(v_infammo_mode3_enabled) infammo_mode3_enabled();
+			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 
 			SendToConsole("sv_infinite_ammo 0");
-			v_infammo = 0;
+			mInfAmmo = 0;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo is 'OFF'");
 		}
 	}
 	
-	function infammo_mode3_enabled()
+	function infAmmoMode3Enabled()
 	{
-		debugPrint("infammo_mode3_enabled function executed");
+		debugPrint("infAmmoMode3Enabled function executed");
 	
 		SendToConsole("bind mouse1 +attack");
-		v_infammo_mode3_enabled = false;
+		mInfAmmoMode3Enabled = false;
 	}
 }
 
-function grentraj(enable = -1)
+function grenTraj(enable = -1)
 {
-	debugPrint("v_grenadetrajectory = " + v_grenadetrajectory);
+	debugPrint("mGrenadeTrajectory = " + mGrenadeTrajectory);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_grenadetrajectory:enable;
+	enable = (enable == -1)?!mGrenadeTrajectory:enable;
 	
 	if(enable)
 	{
 		SendToConsole("sv_grenade_trajectory 1");
-		v_grenadetrajectory = true;
+		mGrenadeTrajectory = true;
 		ScriptPrintMessageChatAll("[Training] Grenade trajectory is 'ON'");
 	}
 	else
 	{
 		SendToConsole("sv_grenade_trajectory 0");
-		v_grenadetrajectory = false;
+		mGrenadeTrajectory = false;
 		ScriptPrintMessageChatAll("[Training] Grenade trajectory is 'OFF'");
 	}
 }
 
-function weapontweaks(wptype = 0)
+function weaponTweaks(wpType = 0)
 {	
-	debugPrint("v_weapontweaks = " + v_weapontweaks);	
+	debugPrint("mWeaponTweaks = " + mWeaponTweaks);	
 	
-	switch(wptype)
+	switch(wpType)
 	{
 		case 1:
-		{	//No recoil
+		{
 			SendToConsole("weapon_recoil_scale 0");
-			v_weapontweaks = 1;
+			mWeaponTweaks = 1;
 			ScriptPrintMessageChatAll("[Training] No recoil is 'ON'");
 			break;
 		}
 		case 2:
-		{	//No spread
+		{
 			SendToConsole("weapon_accuracy_nospread 1");
-			v_weapontweaks = 2;
+			mWeaponTweaks = 2;
 			ScriptPrintMessageChatAll("[Training] No spread is 'ON'");
 			break;
 		}
 		case 3:
-		{	//No air inaccuracy
+		{
 			SendToConsole("weapon_air_spread_scale 0");
-			v_weapontweaks = 3;
+			mWeaponTweaks = 3;
 			ScriptPrintMessageChatAll("[Training] No air inaccuracy is 'ON'");
 			break;
 		}
@@ -282,30 +275,30 @@ function weapontweaks(wptype = 0)
 			SendToConsole("weapon_recoil_scale 2");
 			SendToConsole("weapon_accuracy_nospread 0");
 			SendToConsole("weapon_air_spread_scale 1");
-			v_weapontweaks = 0;
+			mWeaponTweaks = 0;
 			ScriptPrintMessageChatAll("[Training] All shooting tweaks are 'OFF'");
 		}
 	}
 }
 
-function hptweaks(hptype = 0)
+function hpTweaks(hpType = 0)
 {	
-	debugPrint("v_healthweaks = " + v_healthweaks);	
+	debugPrint("mHealthweaks = " + mHealthweaks);	
 	
-	switch(hptype)
+	switch(hpType)
 	{
 		case 1:
-		{	//Regeneration
+		{
 			SendToConsole("sv_regeneration_force_on 1");
-			v_healthweaks = 1;
+			mHealthweaks = 1;
 			ScriptPrintMessageChatAll("[Training] Regeneration is 'ON'");
 			break;
 		}
 		case 2:
-		{	//10k hp
+		{
 			EntFire("player", "addoutput", "health 10000");
 			EntFire("player", "addoutput", "max_health 10000");
-			v_healthweaks = 3;
+			mHealthweaks = 3;
 			ScriptPrintMessageChatAll("[Training] 10k hp mode is 'ON'");
 			break;
 		}
@@ -314,13 +307,13 @@ function hptweaks(hptype = 0)
 			SendToConsole("sv_regeneration_force_on 0");
 			EntFire("player", "addoutput", "health 100");
 			EntFire("player", "addoutput", "max_health 100");
-			v_healthweaks = 0;
+			mHealthweaks = 0;
 			ScriptPrintMessageChatAll("[Training] All health tweaks are 'OFF'");
 		}
 	}
 }
 
-function weapons(wptype_string = "")
+function weapons(wpType = "")
 {	
 	function give_other_weapons()
 	{
@@ -333,14 +326,14 @@ function weapons(wptype_string = "")
 		debugPrint("Given a p250 + nades");
 	}
 
-	local wptype_enum;
-	if(wptype_string == "ak47") wptype_enum = WEAPON.AK47;
-	else if(wptype_string == "m4a4") wptype_enum = WEAPON.M4A4;
-	else if(wptype_string == "m4a1") wptype_enum = WEAPON.M4A1;
-	else if(wptype_string == "awp") wptype_enum = WEAPON.AWP;
-	else wptype_enum = WEAPON.NULL;
+	local wpTypeEnum;
+	if(wpType == "ak47") wpTypeEnum = WEAPON.AK47;
+	else if(wpType == "m4a4") wpTypeEnum = WEAPON.M4A4;
+	else if(wpType == "m4a1") wpTypeEnum = WEAPON.M4A1;
+	else if(wpType == "awp") wpTypeEnum = WEAPON.AWP;
+	else wpTypeEnum = WEAPON.NULL;
 	
-	switch(wptype_enum)
+	switch(wpTypeEnum)
 	{
 		case WEAPON.AK47:
 		{
@@ -377,16 +370,16 @@ function weapons(wptype_string = "")
 	}
 }
 
-function clearmap()
+function clearMap()
 {
 	EntFire("item_*", "kill");
 	
-	local weapon_handle = null;
-	while(Entities.FindByClassname(weapon_handle, "weapon_*") != null)
+	local weaponHandle = null;
+	while(Entities.FindByClassname(weaponHandle, "weapon_*") != null)
 	{
-		weapon_handle = Entities.FindByClassname(weapon_handle, "weapon_*");
-		if (weapon_handle.GetClassname() == "weapon_knife") continue;
-		weapon_handle.Destroy();
+		weaponHandle = Entities.FindByClassname(weaponHandle, "weapon_*");
+		if (weaponHandle.GetClassname() == "weapon_knife") continue;
+		weaponHandle.Destroy();
 	}
 	
 	SendToConsole("r_cleardecals");
@@ -395,10 +388,10 @@ function clearmap()
 
 function money(enable = -1)
 {	
-	debugPrint("v_money = " + v_money);
+	debugPrint("mMoney = " + mMoney);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_money:enable;
+	enable = (enable == -1)?!mMoney:enable;
 	if(enable)
 	{
 		SendToConsole("mp_maxmoney 50000");
@@ -406,7 +399,7 @@ function money(enable = -1)
 		SendToConsole("mp_afterroundmoney 50000");
 		SendToConsole("mp_buytime 999999");
 		SendToConsole("impulse 101");
-		v_money = true;
+		mMoney = true;
 	}
 	else
 	{
@@ -414,36 +407,36 @@ function money(enable = -1)
 		SendToConsole("mp_startmoney 800");
 		SendToConsole("mp_afterroundmoney 0");
 		SendToConsole("mp_buytime 45");
-		v_money = false;
+		mMoney = false;
 	}
 }
 
 function respawn(enable = -1)
 {
-	debugPrint("v_respawn = " + v_respawn);
+	debugPrint("v_respawn = " + mRespawn);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_respawn:enable;
+	enable = (enable == -1)?!mRespawn:enable;
 	if(enable)
 	{
 		SendToConsole("mp_respawn_on_death_ct 1");
 		SendToConsole("mp_respawn_on_death_t 1");
-		v_respawn = true;
+		mRespawn = true;
 	}
 	else
 	{
 		SendToConsole("mp_respawn_on_death_ct 0");
 		SendToConsole("mp_respawn_on_death_t 0");
-		v_respawn = false;
+		mRespawn = false;
 	}
 }
 
-function defweapons(enable = -1)
+function defWeapons(enable = -1)
 {
-	debugPrint("v_defaultweapons = " + v_defaultweapons);
+	debugPrint("mDefaultWeapons = " + mDefaultWeapons);
 	debugPrint("enable = " + enable);
 	
-	enable = (enable == -1)?!v_defaultweapons:enable;
+	enable = (enable == -1)?!mDefaultWeapons:enable;
 	if(enable)
 	{
 		SendToConsole("mp_ct_default_primary weapon_m4a1_silencer");
@@ -454,7 +447,7 @@ function defweapons(enable = -1)
 		SendToConsole("mp_t_default_secondary weapon_p250");
 		SendToConsole("mp_t_default_grenades \"weapon_flashbang weapon_smokegrenade weapon_molotov weapon_hegrenade\"");
 		
-		v_defaultweapons = true;
+		mDefaultWeapons = true;
 	}
 	else
 	{
@@ -466,10 +459,11 @@ function defweapons(enable = -1)
 		SendToConsole("mp_t_default_secondary weapon_glock");
 		SendToConsole("mp_t_default_grenades \"\"");
 		
-		v_defaultweapons = false;
+		mDefaultWeapons = false;
 	}
 }
 
+/*
 function nadetr(enable = -1, start_paused = 0)
 {
 	enable = (enable == -1)?!v_nadetraining:enable;
@@ -489,17 +483,18 @@ function nadetr(enable = -1, start_paused = 0)
 		v_nadetraining = false;
 	}
 }
+*/
 
+//TODO: Change from toggling to enabling only, unless specified otherwise
 function trainingStartup(enable = -1)
 {	
-	if(v_debug)
+	if(mTrainingDebug)
 	{
-		printl("[Debug] v_startup = " + v_startup);
+		printl("[Debug] mStartup = " + mStartup);
 		printl("[Debug] enable = " + enable);
 	}
 	
-	enable = (enable == -1)?!v_startup:enable;
-	//If function was called without a parameter, set enable to inverted v_startup
+	enable = (enable == -1)?!mStartup:enable;
 	if(enable)
 	{
 		SendToConsole("mp_freezetime 1");
@@ -514,7 +509,7 @@ function trainingStartup(enable = -1)
 		SendToConsole("ammo_grenade_limit_total 5");
 		SendToConsole("mp_weapons_allow_typecount 9999");
 		
-		v_startup = true;
+		mStartup = true;
 	}
 	else
 	{
@@ -530,13 +525,13 @@ function trainingStartup(enable = -1)
 		SendToConsole("ammo_grenade_limit_total 3");
 		SendToConsole("mp_weapons_allow_typecount 5");		
 
-		v_startup = false;
+		mStartup = false;
 	}
 }
 
 function trainingAutoSetup(enable = true)
 {
-	if(v_debug)
+	if(mTrainingDebug)
 	{
 		printl("[Debug] enable = " + enable);
 	}
@@ -545,13 +540,13 @@ function trainingAutoSetup(enable = true)
 	{
 		trainingStartup(true);
 		bhop(true);
-		grentraj(true);
-		infammo(2);
+		grenTraj(true);
+		infAmmo(2);
 		warmup(false);
 		money(true);
 		respawn(true);
 		impacts(1);
-		defweapons(true);
+		defWeapons(true);
 
 		SendToConsole("mp_ignore_round_win_conditions 1")
 	}
@@ -565,7 +560,7 @@ function trainingHelp()
 {
 	printl("\n\n");
 	printl("[TS] training.nut");
-	printl("[TS] Automated Training Script v2.0");
+	printl("[TS] Automated Training Script");
 	printl("[TS] by Gray");
 	printl("------------------------------------------------------------");
 	printl("[TS] To view all available commands type");
@@ -589,17 +584,17 @@ function trainingHelpCommands()
 	printl("[TS]    bhop() - Enable autobunnyhopping. 0 - disable, 1 - enable");
 	printl("[TS]    impacts() - Show bulletimpacts*. 0 - disable, 1 - bullet impacts, 2 - bullet penetration impacts");
 	printl("[TS]    warmup() - Enable infinite warmup. 0 - disable, 1 - enable");
-	printl("[TS]    infammo() - Enable infinite ammo. 0 - disable, 1 - infammo without reloading, 2 - infammo with reloading, 3 - infammo with autoreloading on mouse1 release");
-	printl("[TS]    grentraj() - Enable client-side grenade trajectories. 0 - disable, 1 - enable");
-	printl("[TS]    weapontweaks() - Enable different shooting tweaks*&. 0 - disable, 1 - norecoil, 2 - nospread, 3 - no air inaccuracy");
-	printl("[TS]    hptweaks() - Enable different health tweaks*&. 0 - disable, 1 - regeneration, 2 - give all players 10000hp");
+	printl("[TS]    infAmmo() - Enable infinite ammo. 0 - disable, 1 - infammo without reloading, 2 - infammo with reloading, 3 - infammo with autoreloading on mouse1 release");
+	printl("[TS]    grenTraj() - Enable client-side grenade trajectories. 0 - disable, 1 - enable");
+	printl("[TS]    weaponTweaks() - Enable different shooting tweaks*&. 0 - disable, 1 - norecoil, 2 - nospread, 3 - no air inaccuracy");
+	printl("[TS]    hpTweaks() - Enable different health tweaks*&. 0 - disable, 1 - regeneration, 2 - give all players 10000hp");
 	printl("[TS]    weapons() - Give different guns*. empty - give pistol and grenades, \"awp\", \"ak47\", \"m4a1\", \"m4a4\" - give the specified weapon + pistol and grenades. Note the quotes!");
 	printl("[TS]    clearmap() - Remove all the weapons and items from the map(except knifes)");
 	printl("[TS]    money() - Set maxmoney and your money to 50000 + set inlimited(almost) buytime. 0 - disable, 1 - enable");
 	printl("[TS]    respawn() - Enable respawning. 0 - disable, 1 - enable");
-	printl("[TS]    defweapons() - Enable spawning with m4/ak + pistols and grenades. 0 - disable, 1 - enable");
+	printl("[TS]    defWeapons() - Enable spawning with m4/ak + pistols and grenades. 0 - disable, 1 - enable");
 	printl("[TS]    trainingStartup() - Change some server commads for easier training(freezetime, bot_stop, limitteams, grenade_limit). 0 - disable, 1 - enable")
-	printl("[TS]    trainingAutoSetup() - Enable some important commads from the list above by my choice(trainingStartup, bhop, grentraj, infammo(2), warmup(0), money, respawn, impacts(1), defweapons) + infinite round. 0 - disable infinite round, 1 - enable")
+	printl("[TS]    trainingAutoSetup() - Enable some important commads from the list above by my choice(trainingStartup, bhop, grenTraj, infAmmo(2), warmup(0), money, respawn, impacts(1), defWeapons) + infinite round. 0 - disable infinite round, 1 - enable")
 	printl("[TS]    trainingHelp() - Show help");
 	printl("[TS]    trainingHelpCommands() - List all available commads");
 	printl("[TS]    trainingHelpExamples() - Show some examples of using the script");
@@ -617,50 +612,49 @@ function trainingHelpCommands()
 	printl("\n");
 }
 
-function trainingReset(turn_off_cheats = false, force = false)
+function trainingReset(turnOffCheats = false, force = false)
 {
 	if(!force)
 	{
-		if(v_bunnyhop) bhop(0);
-		if(v_clipbrushes) clipbr(0);
-		if(v_grenadetrajectory) grentraj(0);
-		if(v_healthweaks) hptweaks(0);
-		if(v_infammo) infammo(0);
-		if(v_wallhack) wh(0);
-		if(v_warmup) warmup(0);
-		if(v_weapontweaks) weapontweaks(0);
-		if(v_money) money(0);
-		if(v_respawn) respawn(0);
-		if(v_defaultweapons) defweapons(0);
+		if(mBunnyhop) bhop(0);
+		if(mClipBrushes) clipbr(0);
+		if(mGrenadeTrajectory) grenTraj(0);
+		if(mHealthweaks) hpTweaks(0);
+		if(mInfAmmo) infAmmo(0);
+		if(mWallhack) wh(0);
+		if(mWarmup) warmup(0);
+		if(mWeaponTweaks) weaponTweaks(0);
+		if(mMoney) money(0);
+		if(mRespawn) respawn(0);
+		if(mDefaultWeapons) defWeapons(0);
 
-		if(v_startup) trainingStartup(0);
+		if(mStartup) trainingStartup(0);
 		trainingAutoSetup(0);
 	}
 	else
 	{
 		bhop(0);
 		clipbr(0);
-		grentraj(0);
-		hptweaks(0);
-		infammo(0);
+		grenTraj(0);
+		hpTweaks(0);
+		infAmmo(0);
 		wh(0);
 		warmup(0);
-		weapontweaks(0);
+		weaponTweaks(0);
 		money(0);
 		respawn(0);
-		defweapons(0);
+		defWeapons(0);
 		
 		trainingStartup(0);
 		trainingAutoSetup(0);
 	}
 	
-	if(turn_off_cheats) SendToConsole("sv_cheats 0");
+	if(turnOffCheats) SendToConsole("sv_cheats 0");
 	SendToConsole("mp_restartgame 2");
 }
 
-//First setup
 trainingHelp();
 SendToConsole("sv_cheats 1");
 
-SendToConsole("sv_grenade_trajectory_time 10");
-SendToConsole("sv_grenade_trajectory_thickness 0.6");
+//SendToConsole("sv_grenade_trajectory_time 10");
+//SendToConsole("sv_grenade_trajectory_thickness 0.6");
