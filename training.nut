@@ -12,6 +12,8 @@ const TS_VERSION = 0.1;
 	TODO: Debug messages
 	TODO: Enable sv_cheats only when needed
 	TODO: Add integration with nadetraining.nut
+	TODO: Re-add auto-reloading on MOUSE1 release
+	TODO: Add trainingHelpExamples()
 */
 
 mTrainingDebug				<- false;
@@ -28,9 +30,8 @@ mInfAmmo					<- 0;
 mWeaponTweaks				<- 0;
 mHealthweaks				<- 0;
 mStartup					<- false;
-mInfAmmoMode3Enabled 		<- false;
 mWallhack					<- false;
-mBunnyhopping					<- false;
+mBunnyhopping				<- false;
 mWarmup						<- false;
 mGrenadeTrajectory 			<- false;
 mMoney						<- false;
@@ -232,7 +233,6 @@ function warmup(enable = -1)
   @param ammoType: 0 or any other unsuitable value - turn infinite ammo of
  				   1 - turn infinite ammo without reloading on
   				   2 - turn infinite ammo with reloading on
-				   3 - turn "auto-reloading on +attack release" on
   				   unspecified or -1 - change modes one-by-one in order they're written above
 */
 function infAmmo(ammoType = -1)
@@ -244,7 +244,6 @@ function infAmmo(ammoType = -1)
 	{
 		case 1:
 		{
-			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 		
 			SendToConsole("sv_infinite_ammo 1");
 			mInfAmmo = 1;
@@ -253,42 +252,24 @@ function infAmmo(ammoType = -1)
 		}
 		case 2:
 		{
-			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 		
 			SendToConsole("sv_infinite_ammo 2");
 			mInfAmmo = 2;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo with reloading is 'ON'");
 			break;
 		}
-		case 3:
-		{
-			SendToConsole("alias +noreload \"+attack; sv_infinite_ammo 2\"");
-			SendToConsole("alias -noreload \"-attack; sv_infinite_ammo 1\""); 
-			SendToConsole("bind MOUSE1 +noreload");
-			mInfAmmo = 3;
-			mInfAmmoMode3Enabled = true;
-			ScriptPrintMessageChatAll("[Training] Infinite ammo without reloading is 'ON'");
-			break;
-		}
 		/*
-			If the #ammoType is not valid(in case the user specified so or the ternary expression from the above went over 3), 
-			then turn infinite ammo off and/or rebind MOUSE1 back if necessary(if case 3 was used)
+			If the #ammoType is not valid(in case the user specified so or 
+			the ternary expression from the above went over 3), 
+			then turn infinite ammo off
 		*/
 		default:
 		{
-			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
 
 			SendToConsole("sv_infinite_ammo 0");
 			mInfAmmo = 0;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo is 'OFF'");
 		}
-	}
-	
-	//Rebind MOUSE1 back
-	function infAmmoMode3Enabled()
-	{	
-		SendToConsole("bind MOUSE1 +attack");
-		mInfAmmoMode3Enabled = false;
 	}
 }
 
@@ -694,7 +675,7 @@ function trainingHelpCommands()
 	printl("[TS]    bhop() - Enable autobunnyhopping. 0 - disable, 1 - enable");
 	printl("[TS]    impacts() - Show bulletimpacts*. 0 - disable, 1 - bullet impacts, 2 - bullet penetration impacts");
 	printl("[TS]    warmup() - Enable infinite warmup. 0 - disable, 1 - enable");
-	printl("[TS]    infAmmo() - Enable infinite ammo. 0 - disable, 1 - infammo without reloading, 2 - infammo with reloading, 3 - infammo with autoreloading on mouse1 release");
+	printl("[TS]    infAmmo() - Enable infinite ammo. 0 - disable, 1 - infammo without reloading, 2 - infammo with reloading");
 	printl("[TS]    grenTraj() - Enable client-side grenade trajectories. 0 - disable, 1 - enable");
 	printl("[TS]    weaponTweaks() - Enable different shooting tweaks*&. 0 - disable, 1 - norecoil, 2 - nospread, 3 - no air inaccuracy");
 	printl("[TS]    hpTweaks() - Enable different health tweaks*&. 0 - disable, 1 - regeneration, 2 - give all players 10000hp");
