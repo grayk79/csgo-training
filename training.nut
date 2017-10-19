@@ -1,7 +1,26 @@
+/*
+	Please don't judge that I use javadoc-like comments, I'm just too used to them and they're very readable and easy on eyes
+*/
+
+//The version of the script
 const TS_VERSION = 0.1;
 
-//TODO: Re-add comments and debug messages
+/*	
+	TODOs
+
+	TODO: Add a print function that will print the output to both chat and console
+	TODO: Debug messages
+	TODO: Enable sv_cheats only when needed
+	TODO: Add integration with nadetraining.nut
+*/
+
 mTrainingDebug				<- false;
+
+/*
+	State variables
+	Boolean vars can only be turned on or off(thanks cap!)
+	Integer vars can have multiple states. 0 always means its off
+*/
 
 mClipBrushes				<- 0;
 mImpacts					<- 0;
@@ -11,7 +30,7 @@ mHealthweaks				<- 0;
 mStartup					<- false;
 mInfAmmoMode3Enabled 		<- false;
 mWallhack					<- false;
-mBunnyhop					<- false;
+mBunnyhopping					<- false;
 mWarmup						<- false;
 mGrenadeTrajectory 			<- false;
 mMoney						<- false;
@@ -19,6 +38,7 @@ mRespawn					<- false;
 mDefaultWeapons				<- false;
 //v_nadetraining				<- false;
 
+//Weapons available for weapons()
 enum WEAPON
 {
 	NULL,
@@ -28,15 +48,34 @@ enum WEAPON
 	M4A1
 }
 
+/*
+  Prints debug messages to console, but only when #mTrainingDebug is true
+  @param text - the verbose/debug/error message to print
+  @TODO: add different importance levels
+  
+  P.S. I really hope I'm never gonna need this but who knows ¯\_(ツ)_/¯
+*/
 function debugPrint(text)
 {
+	//If debugging is turned off, exit
 	if(!mTrainingDebug) return;
+
+	//Print the message to console with the prefix
 	printl("[TrainingDebug]" + text);
 }
 
+/*
+  Controls clip brushes
+  @param clipType: 0 or any other unsuitable value - turn clip brushes off
+ 				   1 - turn player clip brushes on
+  				   2 - turn grenade clip brushes on
+  				   unspecified or -1 - change modes one-by-one in order they're written above
+*/
 function clipbr(clipType = -1)
 {	
-	clipType = (clipType == -1)?mClipBrushes +1:clipType;
+	//If #clipType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
+	clipType = (clipType == -1) ? mClipBrushes + 1 : clipType;
+	
 	switch(clipType)
 	{
 		case 1:
@@ -53,6 +92,10 @@ function clipbr(clipType = -1)
 			ScriptPrintMessageChatAll("[Training] Grenade clip brushes are 'ON'");
 			break;
 		}
+		/*
+			If the #clipType is not valid(in case the user specified so or the ternary expression from the above went over 2), 
+			then turn the clip brushes off
+		*/
 		default:
 		{
 			SendToConsole("r_drawclipbrushes 0"); 
@@ -63,9 +106,17 @@ function clipbr(clipType = -1)
 	
 }
 
+/*
+  Controls wallhacks(VAC safe, its just a console command lol)
+  @param enable: 0 or false - turn off
+				 1 or true - turn on
+				 unspecified or -1 - toggle
+  @TODO: Find a better way to view other player through walls(glowing maybe?)
+*/
 function wh(enable = -1)
 {
-	enable = (enable == -1)?!mWallhack:enable;
+	//If #enable is -1 or unspecified(defaults to -1), then toggle otherwise use the value specified by user
+	enable = (enable == -1) ? !mWallhack : enable;
 	if(enable)
 	{
 		SendToConsole("r_drawothermodels 2");
@@ -73,39 +124,55 @@ function wh(enable = -1)
 		ScriptPrintMessageChatAll("[Training] Wallhack is 'ON'");
 	}
 	else
-		{
+	{
 		SendToConsole("r_drawothermodels 1");
 		mWallhack = false;
 		ScriptPrintMessageChatAll("[Training] Wallhack is 'OFF'");
 	}
 }
 
+/*
+  Controls auto bunny hopping
+  @param enable: 0 or false - turn off
+				 1 or true - turn on
+				 unspecified or -1 - toggle
+*/
 function bhop(enable = -1)
 {	
-	enable = (enable == -1)?!mBunnyhop:enable;
+	//If #enable is -1 or unspecified(defaults to -1), then toggle otherwise use the value specified by user
+	enable = (enable == -1) ? !mBunnyhopping : enable;
 	if(enable)
 	{
 		SendToConsole("sv_enablebunnyhopping 1");
 		SendToConsole("sv_autobunnyhopping 1");
 		SendToConsole("sv_clamp_unsafe_velocities 0");
 		SendToConsole("sv_airaccelerate 100");
-		mBunnyhop = true;
+		mBunnyhopping = true;
 		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'ON'");
 	}
 	else
-		{
+	{
 		SendToConsole("sv_enablebunnyhopping 0");
 		SendToConsole("sv_autobunnyhopping 0");
 		SendToConsole("sv_clamp_unsafe_velocities 1");
 		SendToConsole("sv_airaccelerate 12");
-		mBunnyhop = false;
+		mBunnyhopping = false;
 		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'OFF'");
 	}
 }
 
+/*
+  Controls bullet impacts. Note: modes may be enabled simultaneously
+  @param impactsType: 0 or any other unsuitable value - turn all bullet impacts off
+ 				   	  1 - turn usual bullet impacts on
+  				      2 - turn bullet penetration impacts on
+  				      unspecified or -1 - change modes one-by-one in order they're written above
+*/
 function impacts(impactsType = -1)
 {
-	impactsType = (impactsType == -1)?mImpacts +1:impactsType;
+	//If #impactsType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
+	impactsType = (impactsType == -1) ? mImpacts + 1 : impactsType;
+	
 	switch(impactsType)
 	{
 		case 1:
@@ -122,6 +189,10 @@ function impacts(impactsType = -1)
 			ScriptPrintMessageChatAll("[Training] Bullet penetraion impacts are 'ON'");
 			break;
 		}
+		/*
+			If the #impactsType is not valid(in case the user specified so or the ternary expression from the above went over 2), 
+			then turn the bullet impacts off
+		*/
 		default:
 		{
 			SendToConsole("sv_showimpacts 0");
@@ -132,9 +203,15 @@ function impacts(impactsType = -1)
 	}
 }
 
+/*
+  Controls warmup
+  @param enable: 0 or false - turn off
+				 1 or true - turn on
+				 unspecified or -1 - toggle
+*/
 function warmup(enable = -1)
 {	
-	enable = (enable == -1)?!ScriptIsWarmupPeriod():enable;
+	enable = (enable == -1) ? !ScriptIsWarmupPeriod() : enable;
 	if(enable)
 	{
 		SendToConsole("mp_warmup_start");
@@ -144,15 +221,25 @@ function warmup(enable = -1)
 	else
 	{
 		SendToConsole("mp_warmup_end");
-		SendToConsole("mp_warmuptime 30");
+		//SendToConsole("mp_warmuptime 30");
 		SendToConsole("mp_warmup_pausetimer 0");
 		mWarmup = false;
 	}
 }
 
+/*
+  Controls infinite ammo
+  @param ammoType: 0 or any other unsuitable value - turn infinite ammo of
+ 				   1 - turn infinite ammo without reloading on
+  				   2 - turn infinite ammo with reloading on
+				   3 - turn "auto-reloading on +attack release" on
+  				   unspecified or -1 - change modes one-by-one in order they're written above
+*/
 function infAmmo(ammoType = -1)
 {		
-	ammoType = (ammoType == -1)?mInfAmmo +1:ammoType;
+	//If #ammoType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
+	ammoType = (ammoType == -1) ? mInfAmmo + 1 : ammoType;
+
 	switch(ammoType)
 	{
 		case 1:
@@ -177,12 +264,16 @@ function infAmmo(ammoType = -1)
 		{
 			SendToConsole("alias +noreload \"+attack; sv_infinite_ammo 2\"");
 			SendToConsole("alias -noreload \"-attack; sv_infinite_ammo 1\""); 
-			SendToConsole("bind mouse1 +noreload");
+			SendToConsole("bind MOUSE1 +noreload");
 			mInfAmmo = 3;
 			mInfAmmoMode3Enabled = true;
 			ScriptPrintMessageChatAll("[Training] Infinite ammo without reloading is 'ON'");
 			break;
 		}
+		/*
+			If the #ammoType is not valid(in case the user specified so or the ternary expression from the above went over 3), 
+			then turn infinite ammo off and/or rebind MOUSE1 back if necessary(if case 3 was used)
+		*/
 		default:
 		{
 			if(mInfAmmoMode3Enabled) infAmmoMode3Enabled();
@@ -193,16 +284,23 @@ function infAmmo(ammoType = -1)
 		}
 	}
 	
+	//Rebind MOUSE1 back
 	function infAmmoMode3Enabled()
 	{	
-		SendToConsole("bind mouse1 +attack");
+		SendToConsole("bind MOUSE1 +attack");
 		mInfAmmoMode3Enabled = false;
 	}
 }
 
+/*
+  Controls grenade trajectories. Note: is shown only on listen server's host
+  @param enable: 0 or false - turn off
+				 1 or true - turn on
+				 unspecified or -1 - toggle
+*/
 function grenTraj(enable = -1)
 {
-	enable = (enable == -1)?!mGrenadeTrajectory:enable;
+	enable = (enable == -1) ? !mGrenadeTrajectory : enable;
 	
 	if(enable)
 	{
@@ -218,6 +316,13 @@ function grenTraj(enable = -1)
 	}
 }
 
+/*
+  Tweaks shooting. Note: modes may be enabled simultaneously
+  @param wpType: 0 or any other unsuitable value - turn all weapon tweaks off
+ 				 1 - disable recoil
+  				 2 - disable spread
+				 3 - disable air inaccuracy
+*/
 function weaponTweaks(wpType = 0)
 {	
 	switch(wpType)
@@ -254,6 +359,12 @@ function weaponTweaks(wpType = 0)
 	}
 }
 
+/*
+  Tweaks health. Note: modes may be enabled simultaneously
+  @param wpType: 0 or any other unsuitable value - turn all health tweaks off
+ 				 1 - enable regeneration
+  				 2 - set health to 10000
+*/
 function hpTweaks(hpType = 0)
 {	
 	switch(hpType)
@@ -284,9 +395,21 @@ function hpTweaks(hpType = 0)
 	}
 }
 
+/*
+  Gives weapons to the listen server's host
+  The default set: give P250 + all nades
+  @param wpType: empty or unspecified - give the default set
+				 "ak47" - give AK47 + the default set
+				 "m4a4" - give M4A4 + the default set
+				 "m4a1" - give M4A1-S + the default set
+				 "awp" - give AWP + the default set
+
+  @TODO: Rework weapon giving system. Replace give command with something else
+  @TODO: Give more input options(integers?)
+*/
 function weapons(wpType = "")
 {	
-	function give_other_weapons()
+	function giveTheDefaultSet()
 	{
 		SendToConsole("give weapon_p250");
 		SendToConsole("give weapon_hegrenade");
@@ -308,34 +431,37 @@ function weapons(wpType = "")
 		case WEAPON.AK47:
 		{
 			SendToConsole("give weapon_ak47");
-			give_other_weapons();
+			giveTheDefaultSet();
 			break;
 		}
 		case WEAPON.M4A4:
 		{
 			SendToConsole("give weapon_m4a1");
-			give_other_weapons();
+			giveTheDefaultSet();
 			break;
 		}
 		case WEAPON.M4A1:
 		{
 			SendToConsole("give weapon_m4a1_silencer");
-			give_other_weapons();
+			giveTheDefaultSet();
 			break;
 		}
 		case WEAPON.AWP:
 		{
 			SendToConsole("give weapon_awp");
-			give_other_weapons();
+			giveTheDefaultSet();
 			break;
 		}
 		default:
 		{
-			give_other_weapons();
+			giveTheDefaultSet();
 		}
 	}
 }
 
+/*
+  Removes all items and weapons except knives from the map
+*/
 function clearMap()
 {
 	EntFire("item_*", "kill");
@@ -352,9 +478,17 @@ function clearMap()
 	SendToConsole("slot3");
 }
 
+/*
+  Sets maximum amount of money allowed to 50000, sets very long buy time, sets money to the maximum every round and gives 50000$ to the listen server's host
+  @param enable: 0 or false - disable
+				 1 or true - enable
+				 unspecified or -1 - toggle
+
+  @TODO: Give money to every player and not only the host, i.e. replace impulse with a different implementation(EntFire?)
+*/
 function money(enable = -1)
 {		
-	enable = (enable == -1)?!mMoney:enable;
+	enable = (enable == -1) ? !mMoney : enable;
 	if(enable)
 	{
 		SendToConsole("mp_maxmoney 50000");
@@ -374,9 +508,15 @@ function money(enable = -1)
 	}
 }
 
+/*
+  Makes players respawn on death
+  @param enable: 0 or false - disable
+				 1 or true - enable
+				 unspecified or -1 - toggle
+*/
 function respawn(enable = -1)
 {	
-	enable = (enable == -1)?!mRespawn:enable;
+	enable = (enable == -1) ? !mRespawn : enable;
 	if(enable)
 	{
 		SendToConsole("mp_respawn_on_death_ct 1");
@@ -391,6 +531,12 @@ function respawn(enable = -1)
 	}
 }
 
+/*
+  Makes players spawn with AKs on T side and M4s on CT
+  @param enable: 0 or false - disable
+				 1 or true - enable
+				 unspecified or -1 - toggle
+*/
 function defWeapons(enable = -1)
 {	
 	enable = (enable == -1)?!mDefaultWeapons:enable;
@@ -442,10 +588,17 @@ function nadetr(enable = -1, start_paused = 0)
 }
 */
 
-//TODO: Change from toggling to enabling only, unless specified otherwise
+/*
+  Sets up all the necessary(from my view) commands
+  @param enable: 0 or false - disable
+				 1 or true - enable
+				 unspecified or -1 - toggle
+				 
+  @TODO: Change from toggling to enabling only, unless specified otherwise
+*/
 function trainingStartup(enable = -1)
 {	
-	enable = (enable == -1)?!mStartup:enable;
+	enable = (enable == -1) ? !mStartup : enable;
 	if(enable)
 	{
 		SendToConsole("mp_freezetime 1");
@@ -480,6 +633,11 @@ function trainingStartup(enable = -1)
 	}
 }
 
+/*
+  Sets up all the commands one may want to enable on a usual training
+  @param enable: 0 or false - disable
+				 1, true or unspecified - enable
+*/
 function trainingAutoSetup(enable = true)
 {	
 	if(enable)
@@ -502,6 +660,9 @@ function trainingAutoSetup(enable = true)
 	}
 }
 
+/*
+  Shows help message
+*/
 function trainingHelp()
 {
 	printl("\n\n");
@@ -521,6 +682,9 @@ function trainingHelp()
 	printl("\n\n");
 }
 
+/*
+  Lists all the available commands
+*/
 function trainingHelpCommands()
 {
 	printl("\n");
@@ -558,11 +722,18 @@ function trainingHelpCommands()
 	printl("\n");
 }
 
+/*
+  Resets everything to the defaults
+  @param turnOffCheats: false or unspecified - leave sv_cheats on
+						true - disable sv_cheats
+  @param force: false or unspecified - disable only those functions that were enabled
+				true - turn off every function, even those that weren't enabled
+*/
 function trainingReset(turnOffCheats = false, force = false)
 {
 	if(!force)
 	{
-		if(mBunnyhop) bhop(0);
+		if(mBunnyhopping) bhop(0);
 		if(mClipBrushes) clipbr(0);
 		if(mGrenadeTrajectory) grenTraj(0);
 		if(mHealthweaks) hpTweaks(0);
@@ -599,8 +770,6 @@ function trainingReset(turnOffCheats = false, force = false)
 	SendToConsole("mp_restartgame 2");
 }
 
+//Show the help on script execution
 trainingHelp();
 SendToConsole("sv_cheats 1");
-
-//SendToConsole("sv_grenade_trajectory_time 10");
-//SendToConsole("sv_grenade_trajectory_thickness 0.6");
