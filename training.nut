@@ -8,7 +8,6 @@ const TS_VERSION = 0.1;
 /*	
 	TODOs
 
-	TODO: Add a print function that will print the output to both chat and console
 	TODO: Debug messages
 	TODO: Enable sv_cheats only when needed
 	TODO: Add integration with nadetraining.nut
@@ -50,13 +49,27 @@ enum WEAPON
 }
 
 /*
+  Prints general status messages to both the console and the chat
+  @param text - the message to print
+*/
+function printMessage(text)
+{
+	local prefix = "[Training] ";
+	local finalOutput = prefix + text;
+
+	//Print the message to both the console and the chat
+	printl(finalOutput);
+	ScriptPrintMessageChatAll(finalOutput);
+}
+
+/*
   Prints debug messages to console, but only when #mTrainingDebug is true
   @param text - the verbose/debug/error message to print
   @TODO: add different importance levels
   
   P.S. I really hope I'm never gonna need this but who knows ¯\_(ツ)_/¯
 */
-function debugPrint(text)
+function printDebug(text)
 {
 	//If debugging is turned off, exit
 	if(!mTrainingDebug) return;
@@ -83,14 +96,14 @@ function clipbr(clipType = -1)
 		{
 			SendToConsole("r_drawclipbrushes 2");
 			mClipBrushes = 1;
-			ScriptPrintMessageChatAll("[Training] Player clip brushes are 'ON'");
+			printMessage("Player clip brushes are 'ON'");
 			break;
 		}
 		case 2:
 		{
 			SendToConsole("r_drawclipbrushes 3"); 
 			mClipBrushes = 2;
-			ScriptPrintMessageChatAll("[Training] Grenade clip brushes are 'ON'");
+			printMessage("Grenade clip brushes are 'ON'");
 			break;
 		}
 		/*
@@ -101,7 +114,7 @@ function clipbr(clipType = -1)
 		{
 			SendToConsole("r_drawclipbrushes 0"); 
 			mClipBrushes = 0;
-			ScriptPrintMessageChatAll("[Training] Clip brushes are 'OFF'");
+			printMessage("Clip brushes are 'OFF'");
 		}
 	}
 	
@@ -122,13 +135,13 @@ function wh(enable = -1)
 	{
 		SendToConsole("r_drawothermodels 2");
 		mWallhack = true;
-		ScriptPrintMessageChatAll("[Training] Wallhack is 'ON'");
+		printMessage("Wallhack is 'ON'");
 	}
 	else
 	{
 		SendToConsole("r_drawothermodels 1");
 		mWallhack = false;
-		ScriptPrintMessageChatAll("[Training] Wallhack is 'OFF'");
+		printMessage("Wallhack is 'OFF'");
 	}
 }
 
@@ -149,7 +162,7 @@ function bhop(enable = -1)
 		SendToConsole("sv_clamp_unsafe_velocities 0");
 		SendToConsole("sv_airaccelerate 100");
 		mBunnyhopping = true;
-		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'ON'");
+		printMessage("Bunnyhopping is 'ON'");
 	}
 	else
 	{
@@ -158,7 +171,7 @@ function bhop(enable = -1)
 		SendToConsole("sv_clamp_unsafe_velocities 1");
 		SendToConsole("sv_airaccelerate 12");
 		mBunnyhopping = false;
-		ScriptPrintMessageChatAll("[Training] Bunnyhopping is 'OFF'");
+		printMessage("Bunnyhopping is 'OFF'");
 	}
 }
 
@@ -180,14 +193,14 @@ function impacts(impactsType = -1)
 		{
 			SendToConsole("sv_showimpacts 3");
 			mImpacts = 1;
-			ScriptPrintMessageChatAll("[Training] Bullet impacts are 'ON'");
+			printMessage("Bullet impacts are 'ON'");
 			break;
 		}
 		case 2:
 		{
 			SendToConsole("sv_showimpacts_penetration 1"); 
 			mImpacts = 2;
-			ScriptPrintMessageChatAll("[Training] Bullet penetraion impacts are 'ON'");
+			printMessage("Bullet penetraion impacts are 'ON'");
 			break;
 		}
 		/*
@@ -199,7 +212,7 @@ function impacts(impactsType = -1)
 			SendToConsole("sv_showimpacts 0");
 			SendToConsole("sv_showimpacts_penetration 0"); 
 			mImpacts = 0;
-			ScriptPrintMessageChatAll("[Training] Bullet impacts are 'OFF'");
+			printMessage("Bullet impacts are 'OFF'");
 		}
 	}
 }
@@ -247,7 +260,7 @@ function infAmmo(ammoType = -1)
 		
 			SendToConsole("sv_infinite_ammo 1");
 			mInfAmmo = 1;
-			ScriptPrintMessageChatAll("[Training] Infinite ammo is 'ON'");
+			printMessage("Infinite ammo is 'ON'");
 			break;
 		}
 		case 2:
@@ -255,7 +268,7 @@ function infAmmo(ammoType = -1)
 		
 			SendToConsole("sv_infinite_ammo 2");
 			mInfAmmo = 2;
-			ScriptPrintMessageChatAll("[Training] Infinite ammo with reloading is 'ON'");
+			printMessage("Infinite ammo with reloading is 'ON'");
 			break;
 		}
 		/*
@@ -268,7 +281,7 @@ function infAmmo(ammoType = -1)
 
 			SendToConsole("sv_infinite_ammo 0");
 			mInfAmmo = 0;
-			ScriptPrintMessageChatAll("[Training] Infinite ammo is 'OFF'");
+			printMessage("Infinite ammo is 'OFF'");
 		}
 	}
 }
@@ -287,13 +300,13 @@ function grenTraj(enable = -1)
 	{
 		SendToConsole("sv_grenade_trajectory 1");
 		mGrenadeTrajectory = true;
-		ScriptPrintMessageChatAll("[Training] Grenade trajectory is 'ON'");
+		printMessage("Grenade trajectory is 'ON'");
 	}
 	else
 	{
 		SendToConsole("sv_grenade_trajectory 0");
 		mGrenadeTrajectory = false;
-		ScriptPrintMessageChatAll("[Training] Grenade trajectory is 'OFF'");
+		printMessage("Grenade trajectory is 'OFF'");
 	}
 }
 
@@ -312,21 +325,21 @@ function weaponTweaks(wpType = 0)
 		{
 			SendToConsole("weapon_recoil_scale 0");
 			mWeaponTweaks = 1;
-			ScriptPrintMessageChatAll("[Training] No recoil is 'ON'");
+			printMessage("No recoil is 'ON'");
 			break;
 		}
 		case 2:
 		{
 			SendToConsole("weapon_accuracy_nospread 1");
 			mWeaponTweaks = 2;
-			ScriptPrintMessageChatAll("[Training] No spread is 'ON'");
+			printMessage("No spread is 'ON'");
 			break;
 		}
 		case 3:
 		{
 			SendToConsole("weapon_air_spread_scale 0");
 			mWeaponTweaks = 3;
-			ScriptPrintMessageChatAll("[Training] No air inaccuracy is 'ON'");
+			printMessage("No air inaccuracy is 'ON'");
 			break;
 		}
 		default:
@@ -335,7 +348,7 @@ function weaponTweaks(wpType = 0)
 			SendToConsole("weapon_accuracy_nospread 0");
 			SendToConsole("weapon_air_spread_scale 1");
 			mWeaponTweaks = 0;
-			ScriptPrintMessageChatAll("[Training] All shooting tweaks are 'OFF'");
+			printMessage("All shooting tweaks are 'OFF'");
 		}
 	}
 }
@@ -354,7 +367,7 @@ function hpTweaks(hpType = 0)
 		{
 			SendToConsole("sv_regeneration_force_on 1");
 			mHealthweaks = 1;
-			ScriptPrintMessageChatAll("[Training] Regeneration is 'ON'");
+			printMessage("Regeneration is 'ON'");
 			break;
 		}
 		case 2:
@@ -362,7 +375,7 @@ function hpTweaks(hpType = 0)
 			EntFire("player", "addoutput", "health 10000");
 			EntFire("player", "addoutput", "max_health 10000");
 			mHealthweaks = 3;
-			ScriptPrintMessageChatAll("[Training] 10k hp mode is 'ON'");
+			printMessage("10k hp mode is 'ON'");
 			break;
 		}
 		default:
@@ -371,7 +384,7 @@ function hpTweaks(hpType = 0)
 			EntFire("player", "addoutput", "health 100");
 			EntFire("player", "addoutput", "max_health 100");
 			mHealthweaks = 0;
-			ScriptPrintMessageChatAll("[Training] All health tweaks are 'OFF'");
+			printMessage("All health tweaks are 'OFF'");
 		}
 	}
 }
