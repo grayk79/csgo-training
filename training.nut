@@ -22,6 +22,8 @@ mTrainingDebug				<- false;
 	Integer vars can have multiple states. 0 always means its off
 */
 
+mCheats						<- false;
+
 mClipBrushes				<- 0;
 mImpacts					<- 0;
 mInfAmmo					<- 0;
@@ -45,6 +47,31 @@ enum WEAPON
 	AK47,
 	M4A4,
 	M4A1
+}
+
+/*
+  Controls sv_cheats
+  @param state: true - enable
+				false - disable
+
+  If the function is called with no arguments, it defaults to true
+*/
+function enableCheats(state = true)
+{
+	if(state == true)
+	{
+		SendToConsole("sv_cheats 1");
+		mCheats = true;
+		printMessage("sv_cheats are enabled")
+	}
+	//Disable sv_cheats but only if the cvar has already been enabled
+	else if(state == false && mCheats == true)
+	{
+		SendToConsole("sv_cheats 0");
+		mCheats = false;
+		printMessage("sv_cheats are disabled")
+		return;
+	}
 }
 
 /*
@@ -93,6 +120,7 @@ function clipbr(clipType = -1)
 	{
 		case 1:
 		{
+			enableCheats();
 			SendToConsole("r_drawclipbrushes 2");
 			mClipBrushes = 1;
 			printMessage("Player clip brushes are 'ON'");
@@ -100,6 +128,7 @@ function clipbr(clipType = -1)
 		}
 		case 2:
 		{
+			enableCheats();
 			SendToConsole("r_drawclipbrushes 3"); 
 			mClipBrushes = 2;
 			printMessage("Grenade clip brushes are 'ON'");
@@ -132,6 +161,7 @@ function wh(enable = -1)
 	enable = (enable == -1) ? !mWallhack : enable;
 	if(enable)
 	{
+		enableCheats();
 		SendToConsole("r_drawothermodels 2");
 		mWallhack = true;
 		printMessage("Wallhack is 'ON'");
@@ -300,6 +330,7 @@ function grenTraj(enable = -1)
 	
 	if(enable)
 	{
+		enableCheats();
 		SendToConsole("sv_grenade_trajectory 1");
 		mGrenadeTrajectory = true;
 		printMessage("Grenades trajectories are 'ON'");
@@ -367,6 +398,7 @@ function hpTweaks(hpType = 0)
 	{
 		case 1:
 		{
+			enableCheats();
 			SendToConsole("sv_regeneration_force_on 1");
 			mHealthweaks = 1;
 			printMessage("Regeneration is 'ON'");
@@ -374,6 +406,8 @@ function hpTweaks(hpType = 0)
 		}
 		case 2:
 		{
+			//TODO: Rework the 10k health system
+			enableCheats();
 			EntFire("player", "addoutput", "health 10000");
 			EntFire("player", "addoutput", "max_health 10000");
 			mHealthweaks = 3;
@@ -422,6 +456,7 @@ function weapons(wpType = "")
 	else if(wpType == "awp") wpTypeEnum = WEAPON.AWP;
 	else wpTypeEnum = WEAPON.NULL;
 	
+	enableCheats();
 	switch(wpTypeEnum)
 	{
 		case WEAPON.AK47:
@@ -613,6 +648,8 @@ function trainingStartup(enable = -1)
 		
 		SendToConsole("bot_quota_mode normal");
 		SendToConsole("bot_quota 0");
+
+		//FIXME: sv_cheats protected cvar?
 		SendToConsole("bot_stop 1");
 
 		SendToConsole("mp_autoteambalance 0");
@@ -666,6 +703,58 @@ function trainingAutoSetup(enable = true)
 	{
 		SendToConsole("mp_ignore_round_win_conditions 0")
 	}
+}
+
+/*
+  Resets everything to the defaults
+  @param turnOffCheats: false or unspecified - leave sv_cheats on
+						true - disable sv_cheats
+  @param force: false or unspecified - disable only those functions that were enabled
+				true - turn off every function, even those that weren't enabled
+*/
+function trainingReset(turnOffCheats = false, force = false)
+{
+	if(!force)
+	{
+		if(mBunnyhopping) bhop(0);
+		if(mClipBrushes) clipbr(0);
+		if(mGrenadeTrajectory) grenTraj(0);
+		if(mHealthweaks) hpTweaks(0);
+		if(mInfAmmo) infAmmo(0);
+		if(mWallhack) wh(0);
+		if(mWarmup) warmup(0);
+		if(mWeaponTweaks) weaponTweaks(0);
+		if(mMoney) money(0);
+		if(mRespawn) respawn(0);
+		if(mDefaultWeapons) defWeapons(0);
+
+		if(mStartup) trainingStartup(0);
+		trainingAutoSetup(0);
+
+		printMessage("The script is reset successfully");
+	}
+	else
+	{
+		bhop(0);
+		clipbr(0);
+		grenTraj(0);
+		hpTweaks(0);
+		infAmmo(0);
+		wh(0);
+		warmup(0);
+		weaponTweaks(0);
+		money(0);
+		respawn(0);
+		defWeapons(0);
+		
+		trainingStartup(0);
+		trainingAutoSetup(0);
+
+		printMessage("The script is force-reset successfully");
+	}
+	
+	if(turnOffCheats) enableCheats(false);
+	SendToConsole("mp_restartgame 2");
 }
 
 /*
@@ -730,65 +819,5 @@ function trainingHelpCommands()
 	printl("\n");
 }
 
-/*
-  Resets everything to the defaults
-  @param turnOffCheats: false or unspecified - leave sv_cheats on
-						true - disable sv_cheats
-  @param force: false or unspecified - disable only those functions that were enabled
-				true - turn off every function, even those that weren't enabled
-*/
-function trainingReset(turnOffCheats = false, force = false)
-{
-	if(!force)
-	{
-		if(mBunnyhopping) bhop(0);
-		if(mClipBrushes) clipbr(0);
-		if(mGrenadeTrajectory) grenTraj(0);
-		if(mHealthweaks) hpTweaks(0);
-		if(mInfAmmo) infAmmo(0);
-		if(mWallhack) wh(0);
-		if(mWarmup) warmup(0);
-		if(mWeaponTweaks) weaponTweaks(0);
-		if(mMoney) money(0);
-		if(mRespawn) respawn(0);
-		if(mDefaultWeapons) defWeapons(0);
-
-		if(mStartup) trainingStartup(0);
-		trainingAutoSetup(0);
-
-		printMessage("The script is reset successfully");
-	}
-	else
-	{
-		bhop(0);
-		clipbr(0);
-		grenTraj(0);
-		hpTweaks(0);
-		infAmmo(0);
-		wh(0);
-		warmup(0);
-		weaponTweaks(0);
-		money(0);
-		respawn(0);
-		defWeapons(0);
-		
-		trainingStartup(0);
-		trainingAutoSetup(0);
-
-		printMessage("The script is force-reset successfully");
-	}
-	
-	if(turnOffCheats) 
-	{
-		SendToConsole("sv_cheats 0");
-		printMessage("sv_cheats turned off")
-	}
-
-	SendToConsole("mp_restartgame 2");
-}
-
 //Show the help on script execution
 trainingHelp();
-
-//TODO: Enable sv_cheats only when needed
-SendToConsole("sv_cheats 1");
