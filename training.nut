@@ -9,7 +9,6 @@ const TS_VERSION = 0.1;
 	TODOs
 
 	TODO: Debug messages
-	TODO: Enable sv_cheats only when needed
 	TODO: Add integration with nadetraining.nut
 	TODO: Re-add auto-reloading on MOUSE1 release
 	TODO: Add trainingHelpExamples()
@@ -231,6 +230,7 @@ function warmup(enable = -1)
 		SendToConsole("mp_warmup_start");
 		SendToConsole("mp_warmup_pausetimer 1");
 		mWarmup = true;
+		printMessage("Unlimited warmup is 'ON'")
 	}
 	else
 	{
@@ -238,6 +238,8 @@ function warmup(enable = -1)
 		//SendToConsole("mp_warmuptime 30");
 		SendToConsole("mp_warmup_pausetimer 0");
 		mWarmup = false;
+		printMessage("Warmup is 'OFF'")
+
 	}
 }
 
@@ -300,13 +302,13 @@ function grenTraj(enable = -1)
 	{
 		SendToConsole("sv_grenade_trajectory 1");
 		mGrenadeTrajectory = true;
-		printMessage("Grenade trajectory is 'ON'");
+		printMessage("Grenades trajectories are 'ON'");
 	}
 	else
 	{
 		SendToConsole("sv_grenade_trajectory 0");
 		mGrenadeTrajectory = false;
-		printMessage("Grenade trajectory is 'OFF'");
+		printMessage("Grenades trajectories are 'OFF'");
 	}
 }
 
@@ -470,6 +472,8 @@ function clearMap()
 	
 	SendToConsole("r_cleardecals");
 	SendToConsole("slot3");
+
+	printMessage("The map has been cleared")
 }
 
 /*
@@ -483,6 +487,7 @@ function clearMap()
 function money(enable = -1)
 {		
 	enable = (enable == -1) ? !mMoney : enable;
+
 	if(enable)
 	{
 		SendToConsole("mp_maxmoney 50000");
@@ -491,6 +496,7 @@ function money(enable = -1)
 		SendToConsole("mp_buytime 999999");
 		SendToConsole("impulse 101");
 		mMoney = true;
+		printMessage("$$$ mode is 'ON'");
 	}
 	else
 	{
@@ -499,6 +505,7 @@ function money(enable = -1)
 		SendToConsole("mp_afterroundmoney 0");
 		SendToConsole("mp_buytime 45");
 		mMoney = false;
+		printMessage("$$$ mode is 'OFF'");
 	}
 }
 
@@ -511,17 +518,20 @@ function money(enable = -1)
 function respawn(enable = -1)
 {	
 	enable = (enable == -1) ? !mRespawn : enable;
+
 	if(enable)
 	{
 		SendToConsole("mp_respawn_on_death_ct 1");
 		SendToConsole("mp_respawn_on_death_t 1");
 		mRespawn = true;
+		printMessage("Respawning is 'ON'");
 	}
 	else
 	{
 		SendToConsole("mp_respawn_on_death_ct 0");
 		SendToConsole("mp_respawn_on_death_t 0");
 		mRespawn = false;
+		printMessage("Respawning is 'OFF'");
 	}
 }
 
@@ -545,6 +555,8 @@ function defWeapons(enable = -1)
 		SendToConsole("mp_t_default_grenades \"weapon_flashbang weapon_smokegrenade weapon_molotov weapon_hegrenade\"");
 		
 		mDefaultWeapons = true;
+
+		printMessage("Default weapons changed to AK/M4");
 	}
 	else
 	{
@@ -557,6 +569,8 @@ function defWeapons(enable = -1)
 		SendToConsole("mp_t_default_grenades \"\"");
 		
 		mDefaultWeapons = false;
+
+		printMessage("Default weapons set to the defaults");
 	}
 }
 
@@ -741,6 +755,8 @@ function trainingReset(turnOffCheats = false, force = false)
 
 		if(mStartup) trainingStartup(0);
 		trainingAutoSetup(0);
+
+		printMessage("The script is reset successfully");
 	}
 	else
 	{
@@ -758,12 +774,21 @@ function trainingReset(turnOffCheats = false, force = false)
 		
 		trainingStartup(0);
 		trainingAutoSetup(0);
+
+		printMessage("The script is force-reset successfully");
 	}
 	
-	if(turnOffCheats) SendToConsole("sv_cheats 0");
+	if(turnOffCheats) 
+	{
+		SendToConsole("sv_cheats 0");
+		printMessage("sv_cheats turned off")
+	}
+
 	SendToConsole("mp_restartgame 2");
 }
 
 //Show the help on script execution
 trainingHelp();
+
+//TODO: Enable sv_cheats only when needed
 SendToConsole("sv_cheats 1");
