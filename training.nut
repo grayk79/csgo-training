@@ -633,15 +633,11 @@ function nadetr(enable = -1, start_paused = 0)
 
 /*
   Sets up all the necessary(from my view) commands
-  @param enable: 0 or false - disable
-				 1 or true - enable
-				 unspecified or -1 - toggle
-				 
-  @TODO: Change from toggling to enabling only, unless specified otherwise
+  @param enable: unspecified, 1 or true - enable
+				 0 or false - disable
 */
-function trainingStartup(enable = -1)
-{	
-	enable = (enable == -1) ? !mStartup : enable;
+function trainingStartup(enable = 1)
+{
 	if(enable)
 	{
 		SendToConsole("mp_freezetime 1");
