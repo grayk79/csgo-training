@@ -24,20 +24,22 @@ mTrainingDebug				<- false;
 
 mCheats						<- false;
 
-mClipBrushes				<- 0;
-mImpacts					<- 0;
-mInfAmmo					<- 0;
-mWeaponTweaks				<- 0;
-mHealthweaks				<- 0;
-mStartup					<- false;
-mWallhack					<- false;
-mBunnyhopping				<- false;
-mWarmup						<- false;
-mGrenadeTrajectory 			<- false;
-mMoney						<- false;
-mRespawn					<- false;
-mDefaultWeapons				<- false;
-//v_nadetraining				<- false;
+State <- {
+	clipBrushes				= 0,
+	impacts					= 0,
+	infAmmo					= 0,
+	weaponTweaks			= 0,
+	healthweaks				= 0,
+	startup					= false,
+	wallhack				= false,
+	bunnyhopping			= false,
+	warmup					= false,
+	grenadeTrajectory 		= false,
+	money					= false,
+	respawn					= false,
+	defaultWeapons			= false,
+	//v_nadetraining		= false;
+}
 
 //Weapons available for weapons()
 enum WEAPON
@@ -114,7 +116,7 @@ function printDebug(text)
 function clipbr(clipType = -1)
 {	
 	//If #clipType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
-	clipType = (clipType == -1) ? mClipBrushes + 1 : clipType;
+	clipType = (clipType == -1) ? State.clipBrushes + 1 : clipType;
 	
 	switch(clipType)
 	{
@@ -122,7 +124,7 @@ function clipbr(clipType = -1)
 		{
 			enableCheats();
 			SendToConsole("r_drawclipbrushes 2");
-			mClipBrushes = 1;
+			State.clipBrushes = 1;
 			printMessage("Player clip brushes are 'ON'");
 			break;
 		}
@@ -130,7 +132,7 @@ function clipbr(clipType = -1)
 		{
 			enableCheats();
 			SendToConsole("r_drawclipbrushes 3"); 
-			mClipBrushes = 2;
+			State.clipBrushes = 2;
 			printMessage("Grenade clip brushes are 'ON'");
 			break;
 		}
@@ -141,7 +143,7 @@ function clipbr(clipType = -1)
 		default:
 		{
 			SendToConsole("r_drawclipbrushes 0"); 
-			mClipBrushes = 0;
+			State.clipBrushes = 0;
 			printMessage("Clip brushes are 'OFF'");
 		}
 	}
@@ -163,13 +165,13 @@ function wh(enable = -1)
 	{
 		enableCheats();
 		SendToConsole("r_drawothermodels 2");
-		mWallhack = true;
+		State.wallhack = true;
 		printMessage("Wallhack is 'ON'");
 	}
 	else
 	{
 		SendToConsole("r_drawothermodels 1");
-		mWallhack = false;
+		State.wallhack = false;
 		printMessage("Wallhack is 'OFF'");
 	}
 }
@@ -190,7 +192,7 @@ function bhop(enable = -1)
 		SendToConsole("sv_autobunnyhopping 1");
 		SendToConsole("sv_clamp_unsafe_velocities 0");
 		SendToConsole("sv_airaccelerate 100");
-		mBunnyhopping = true;
+		State.bunnyhopping = true;
 		printMessage("Bunnyhopping is 'ON'");
 	}
 	else
@@ -199,7 +201,7 @@ function bhop(enable = -1)
 		SendToConsole("sv_autobunnyhopping 0");
 		SendToConsole("sv_clamp_unsafe_velocities 1");
 		SendToConsole("sv_airaccelerate 12");
-		mBunnyhopping = false;
+		State.bunnyhopping = false;
 		printMessage("Bunnyhopping is 'OFF'");
 	}
 }
@@ -214,21 +216,21 @@ function bhop(enable = -1)
 function impacts(impactsType = -1)
 {
 	//If #impactsType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
-	impactsType = (impactsType == -1) ? mImpacts + 1 : impactsType;
+	impactsType = (impactsType == -1) ? State.impacts + 1 : impactsType;
 	
 	switch(impactsType)
 	{
 		case 1:
 		{
 			SendToConsole("sv_showimpacts 3");
-			mImpacts = 1;
+			State.impacts = 1;
 			printMessage("Bullet impacts are 'ON'");
 			break;
 		}
 		case 2:
 		{
 			SendToConsole("sv_showimpacts_penetration 1"); 
-			mImpacts = 2;
+			State.impacts = 2;
 			printMessage("Bullet penetraion impacts are 'ON'");
 			break;
 		}
@@ -240,7 +242,7 @@ function impacts(impactsType = -1)
 		{
 			SendToConsole("sv_showimpacts 0");
 			SendToConsole("sv_showimpacts_penetration 0"); 
-			mImpacts = 0;
+			State.impacts = 0;
 			printMessage("Bullet impacts are 'OFF'");
 		}
 	}
@@ -259,7 +261,7 @@ function warmup(enable = -1)
 	{
 		SendToConsole("mp_warmup_start");
 		SendToConsole("mp_warmup_pausetimer 1");
-		mWarmup = true;
+		State.warmup = true;
 		printMessage("Unlimited warmup is 'ON'")
 	}
 	else
@@ -267,7 +269,7 @@ function warmup(enable = -1)
 		SendToConsole("mp_warmup_end");
 		//SendToConsole("mp_warmuptime 30");
 		SendToConsole("mp_warmup_pausetimer 0");
-		mWarmup = false;
+		State.warmup = false;
 		printMessage("Warmup is 'OFF'")
 
 	}
@@ -283,7 +285,7 @@ function warmup(enable = -1)
 function infAmmo(ammoType = -1)
 {		
 	//If #ammoType is -1 or unspecified(defaults to -1), then add +1 otherwise use the value specified by the user
-	ammoType = (ammoType == -1) ? mInfAmmo + 1 : ammoType;
+	ammoType = (ammoType == -1) ? State.infAmmo + 1 : ammoType;
 
 	switch(ammoType)
 	{
@@ -291,7 +293,7 @@ function infAmmo(ammoType = -1)
 		{
 		
 			SendToConsole("sv_infinite_ammo 1");
-			mInfAmmo = 1;
+			State.infAmmo = 1;
 			printMessage("Infinite ammo is 'ON'");
 			break;
 		}
@@ -299,7 +301,7 @@ function infAmmo(ammoType = -1)
 		{
 		
 			SendToConsole("sv_infinite_ammo 2");
-			mInfAmmo = 2;
+			State.infAmmo = 2;
 			printMessage("Infinite ammo with reloading is 'ON'");
 			break;
 		}
@@ -312,7 +314,7 @@ function infAmmo(ammoType = -1)
 		{
 
 			SendToConsole("sv_infinite_ammo 0");
-			mInfAmmo = 0;
+			State.infAmmo = 0;
 			printMessage("Infinite ammo is 'OFF'");
 		}
 	}
@@ -332,13 +334,13 @@ function grenTraj(enable = -1)
 	{
 		enableCheats();
 		SendToConsole("sv_grenade_trajectory 1");
-		mGrenadeTrajectory = true;
+		State.grenadeTrajectory = true;
 		printMessage("Grenades trajectories are 'ON'");
 	}
 	else
 	{
 		SendToConsole("sv_grenade_trajectory 0");
-		mGrenadeTrajectory = false;
+		State.grenadeTrajectory = false;
 		printMessage("Grenades trajectories are 'OFF'");
 	}
 }
@@ -357,21 +359,21 @@ function weaponTweaks(wpType = 0)
 		case 1:
 		{
 			SendToConsole("weapon_recoil_scale 0");
-			mWeaponTweaks = 1;
+			State.weaponTweaks = 1;
 			printMessage("No recoil is 'ON'");
 			break;
 		}
 		case 2:
 		{
 			SendToConsole("weapon_accuracy_nospread 1");
-			mWeaponTweaks = 2;
+			State.weaponTweaks = 2;
 			printMessage("No spread is 'ON'");
 			break;
 		}
 		case 3:
 		{
 			SendToConsole("weapon_air_spread_scale 0");
-			mWeaponTweaks = 3;
+			State.weaponTweaks = 3;
 			printMessage("No air inaccuracy is 'ON'");
 			break;
 		}
@@ -380,7 +382,7 @@ function weaponTweaks(wpType = 0)
 			SendToConsole("weapon_recoil_scale 2");
 			SendToConsole("weapon_accuracy_nospread 0");
 			SendToConsole("weapon_air_spread_scale 1");
-			mWeaponTweaks = 0;
+			State.weaponTweaks = 0;
 			printMessage("All shooting tweaks are 'OFF'");
 		}
 	}
@@ -400,7 +402,7 @@ function hpTweaks(hpType = 0)
 		{
 			enableCheats();
 			SendToConsole("sv_regeneration_force_on 1");
-			mHealthweaks = 1;
+			State.healthweaks = 1;
 			printMessage("Regeneration is 'ON'");
 			break;
 		}
@@ -410,7 +412,7 @@ function hpTweaks(hpType = 0)
 			enableCheats();
 			EntFire("player", "addoutput", "health 10000");
 			EntFire("player", "addoutput", "max_health 10000");
-			mHealthweaks = 3;
+			State.healthweaks = 3;
 			printMessage("10k hp mode is 'ON'");
 			break;
 		}
@@ -419,7 +421,7 @@ function hpTweaks(hpType = 0)
 			SendToConsole("sv_regeneration_force_on 0");
 			EntFire("player", "addoutput", "health 100");
 			EntFire("player", "addoutput", "max_health 100");
-			mHealthweaks = 0;
+			State.healthweaks = 0;
 			printMessage("All health tweaks are 'OFF'");
 		}
 	}
@@ -530,7 +532,7 @@ function money(enable = -1)
 		SendToConsole("mp_afterroundmoney 50000");
 		SendToConsole("mp_buytime 999999");
 		SendToConsole("impulse 101");
-		mMoney = true;
+		State.money = true;
 		printMessage("$$$ mode is 'ON'");
 	}
 	else
@@ -539,7 +541,7 @@ function money(enable = -1)
 		SendToConsole("mp_startmoney 800");
 		SendToConsole("mp_afterroundmoney 0");
 		SendToConsole("mp_buytime 45");
-		mMoney = false;
+		State.money = false;
 		printMessage("$$$ mode is 'OFF'");
 	}
 }
@@ -558,14 +560,14 @@ function respawn(enable = -1)
 	{
 		SendToConsole("mp_respawn_on_death_ct 1");
 		SendToConsole("mp_respawn_on_death_t 1");
-		mRespawn = true;
+		State.respawn = true;
 		printMessage("Respawning is 'ON'");
 	}
 	else
 	{
 		SendToConsole("mp_respawn_on_death_ct 0");
 		SendToConsole("mp_respawn_on_death_t 0");
-		mRespawn = false;
+		State.respawn = false;
 		printMessage("Respawning is 'OFF'");
 	}
 }
@@ -589,7 +591,7 @@ function defWeapons(enable = -1)
 		SendToConsole("mp_t_default_secondary weapon_p250");
 		SendToConsole("mp_t_default_grenades \"weapon_flashbang weapon_smokegrenade weapon_molotov weapon_hegrenade\"");
 		
-		mDefaultWeapons = true;
+		State.defaultWeapons = true;
 
 		printMessage("Default weapons changed to AK/M4");
 	}
@@ -603,7 +605,7 @@ function defWeapons(enable = -1)
 		SendToConsole("mp_t_default_secondary weapon_glock");
 		SendToConsole("mp_t_default_grenades \"\"");
 		
-		mDefaultWeapons = false;
+		State.defaultWeapons = false;
 
 		printMessage("Default weapons set to the defaults");
 	}
@@ -654,7 +656,7 @@ function trainingStartup(enable = 1)
 		SendToConsole("ammo_grenade_limit_total 5");
 		SendToConsole("mp_weapons_allow_typecount 9999");
 		
-		mStartup = true;
+		State.startup = true;
 	}
 	else
 	{
@@ -670,7 +672,7 @@ function trainingStartup(enable = 1)
 		SendToConsole("ammo_grenade_limit_total 3");
 		SendToConsole("mp_weapons_allow_typecount 5");		
 
-		mStartup = false;
+		State.startup = false;
 	}
 }
 
@@ -712,19 +714,19 @@ function trainingReset(turnOffCheats = false, force = false)
 {
 	if(!force)
 	{
-		if(mBunnyhopping) bhop(0);
-		if(mClipBrushes) clipbr(0);
-		if(mGrenadeTrajectory) grenTraj(0);
-		if(mHealthweaks) hpTweaks(0);
-		if(mInfAmmo) infAmmo(0);
-		if(mWallhack) wh(0);
-		if(mWarmup) warmup(0);
-		if(mWeaponTweaks) weaponTweaks(0);
-		if(mMoney) money(0);
-		if(mRespawn) respawn(0);
-		if(mDefaultWeapons) defWeapons(0);
+		if(State.bunnyhopping) bhop(0);
+		if(State.clipBrushes) clipbr(0);
+		if(State.grenadeTrajectory) grenTraj(0);
+		if(State.healthweaks) hpTweaks(0);
+		if(State.infAmmo) infAmmo(0);
+		if(State.wallhack) wh(0);
+		if(State.warmup) warmup(0);
+		if(State.weaponTweaks) weaponTweaks(0);
+		if(State.money) money(0);
+		if(State.respawn) respawn(0);
+		if(State.defaultWeapons) defWeapons(0);
 
-		if(mStartup) trainingStartup(0);
+		if(State.startup) trainingStartup(0);
 		trainingAutoSetup(0);
 
 		printMessage("The script is reset successfully");
